@@ -10,7 +10,10 @@ import java.io.Serializable;
 public class ${className}Dto implements Serializable{
 
 <#list typeMap?keys as key>
-    private ${typeMap[key]} ${key}; // ${commentMap[key]}
+    /**
+     * ${commentMap[key]}
+     */
+    private ${typeMap[key]} ${key};
 </#list>
 
 }

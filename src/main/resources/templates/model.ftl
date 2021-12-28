@@ -9,7 +9,10 @@ import lombok.Data;
 public class ${className}Model {
 
 <#list typeMap?keys as key>
-    private ${typeMap[key]} ${key}; // ${commentMap[key]}
+    /**
+     * ${commentMap[key]}
+     */
+    private ${typeMap[key]} ${key};
 </#list>
 
 }
