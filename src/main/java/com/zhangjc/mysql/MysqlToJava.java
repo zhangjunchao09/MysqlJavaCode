@@ -83,18 +83,21 @@ public class MysqlToJava {
     public static void multiTableToJavaCode() {
         List<Map<String, Object>> data = new ArrayList();
 
-        String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA =" + dbName + "'";
+        String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA ='" + dbName + "'";
         DBHelper tableDb = new DBHelper(url, driverName, user, password, tableSql);//创建DBHelper对象
         try (ResultSet ret = tableDb.pst.executeQuery()) {
             while (ret.next()) {
                 String table_name = ret.getString(1);
+                String class_name = SqlToPoUtil.toUpperCaseFirstOne(SqlToPoUtil.replaceUnderlineAndfirstToUpper(table_name));
+
                 DataGenerate dataGenerate = singleTableToDataGenerate(dbName, table_name);
-                dataGenerate.createDao(basePath, pakage, className, primaryKey);
-                dataGenerate.createService(basePath, pakage, className, primaryKey);
-                dataGenerate.createServiceIml(basePath, pakage, className, primaryKey);
-                dataGenerate.createDto(basePath, pakage, className);
-                dataGenerate.createModel(basePath, pakage, className);
-                dataGenerate.createMapper(basePath, pakage, className, tableName, primaryKey, primaryKeyField);
+
+                dataGenerate.createDao(basePath, pakage, class_name, primaryKey);
+                dataGenerate.createService(basePath, pakage, class_name, primaryKey);
+                dataGenerate.createServiceIml(basePath, pakage, class_name, primaryKey);
+                dataGenerate.createDto(basePath, pakage, class_name);
+                dataGenerate.createModel(basePath, pakage, class_name);
+                dataGenerate.createMapper(basePath, pakage, class_name, table_name, primaryKey, primaryKeyField);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -123,7 +126,7 @@ public class MysqlToJava {
     public static void dataBaseDesign() {
         List<Map<String, Object>> data = new ArrayList();
 
-        String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA =" + dbName + "'";
+        String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA ='" + dbName + "'";
         DBHelper tableDb = new DBHelper(url, driverName, user, password, tableSql);//创建DBHelper对象
         try (ResultSet ret = tableDb.pst.executeQuery()) {
             while (ret.next()) {
