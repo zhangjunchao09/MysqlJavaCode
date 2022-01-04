@@ -1,10 +1,15 @@
 package com.zhangjc.mysql;
 
+import cn.afterturn.easypoi.word.WordExportUtil;
 import com.zhangjc.mysql.utils.FreeMarkeUtil;
 import com.zhangjc.mysql.utils.SqlToPoUtil;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -142,6 +147,21 @@ class CreateCode {
         root.put("pakage", pakage);
         root.put("primaryKey", primaryKey);
         FreeMarkeUtil.fprint(path, "serviceiml.ftl", root, fileName);
+
+    }
+
+    public static void createDataBaseDesign(List<Map<String, Object>> fields) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("fields", fields);
+            XWPFDocument doc = WordExportUtil
+                    .exportWord07("templates/data-base-design.docx", map);
+            FileOutputStream fos = new FileOutputStream("D:/autoCode/数据库设计说明书.docx");
+            doc.write(fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

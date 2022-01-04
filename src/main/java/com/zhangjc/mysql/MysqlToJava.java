@@ -6,6 +6,7 @@ import com.zhangjc.mysql.utils.SqlToPoUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -35,12 +36,14 @@ public class MysqlToJava {
             Map<String, String> javaTypeMap = dataGenerate.getJavaTypeMap();
             Map<String, String> jdbcTypeMap = dataGenerate.getJdbcTypeMap();
             Map<String, String> commentMap = dataGenerate.getCommentMap();
+            List<Map<String, Object>> fieldsList = dataGenerate.getFieldsList();
             CreateCode.createDao(basePath, pakage, className, primaryKey);
             CreateCode.createService(basePath, pakage, className, primaryKey);
             CreateCode.createServiceIml(basePath, pakage, className, primaryKey);
             CreateCode.createDto(javaTypeMap, commentMap, basePath, pakage, className);
             CreateCode.createModel(javaTypeMap, commentMap, basePath, pakage, className);
             CreateCode.createMapper(fieldMap, jdbcTypeMap, basePath, pakage, className, tableName, primaryKey, primaryKeyField);
+            CreateCode.createDataBaseDesign(fieldsList);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
