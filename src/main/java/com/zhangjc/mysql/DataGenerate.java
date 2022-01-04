@@ -1,7 +1,12 @@
 package com.zhangjc.mysql;
 
+import cn.afterturn.easypoi.word.WordExportUtil;
+import com.zhangjc.mysql.utils.FreeMarkeUtil;
 import com.zhangjc.mysql.utils.SqlToPoUtil;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DataGenerate {
 
@@ -34,68 +40,184 @@ public class DataGenerate {
                 this.fieldMap.put(column_name, SqlToPoUtil.replaceUnderlineAndfirstToUpper(column_name));
                 this.commentMap.put(column_name, column_comment);
 
-                fieldObj.put("columnName",column_name);
-                fieldObj.put("columnComment",column_comment);
+                fieldObj.put("columnName", column_name);
+                fieldObj.put("columnComment", column_comment);
 
                 if ("bigint".equals(data_type)) {
                     this.javaTypeMap.put(column_name, "Long");
                     this.jdbcTypeMap.put(column_name, "BIGINT");
 
-                    fieldObj.put("columnType","BIGINT");
+                    fieldObj.put("columnType", "BIGINT");
                 } else if ("int".equals(data_type)) {
                     this.javaTypeMap.put(column_name, "Integer");
                     this.jdbcTypeMap.put(column_name, "INTEGER");
 
-                    fieldObj.put("columnType","INTEGER");
+                    fieldObj.put("columnType", "INTEGER");
                 } else if ("datetime".equals(data_type)) {
                     this.javaTypeMap.put(column_name, "Date");
                     this.jdbcTypeMap.put(column_name, "TIMESTAMP");
 
-                    fieldObj.put("columnType","TIMESTAMP");
+                    fieldObj.put("columnType", "TIMESTAMP");
                 } else {
                     this.javaTypeMap.put(column_name, "String");
                     this.jdbcTypeMap.put(column_name, "VARCHAR");
 
-                    fieldObj.put("columnType","VARCHAR");
+                    fieldObj.put("columnType", "VARCHAR");
                 }
             }
-            fieldObj.put("columnLength",length);
+            fieldObj.put("columnLength", length);
             this.fieldsList.add(fieldObj);
         }
 
     }
 
-    public Map<String, String> getFieldMap() {
-        return fieldMap;
+    public void createMapper(String basePath,
+                             String pakage,
+                             String className,
+                             String tableName,
+                             String primaryKey,
+                             String primaryKeyField) {
+        String path = basePath + "mapper";//所创建文件的路径
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();//创建目录
+        }
+        String fileName = className + "Mapper.xml";//文件名及类型
+        Map<String, Object> root = new HashMap<>();
+        root.put("className", className);
+        root.put("tableName", tableName);
+        root.put("pakage", pakage);
+        Map<String, String> typeMap = new HashMap<>();
+        Set<String> keys = jdbcTypeMap.keySet();
+        for (Object key : keys) {
+            String k = (String) key;
+            String javaType = jdbcTypeMap.get(k);
+            typeMap.put(k, javaType);
+        }
+        root.put("fieldMap", fieldMap);
+        root.put("typeMap", typeMap);
+        root.put("primaryKey", primaryKey);
+        root.put("primaryKeyField", primaryKeyField);
+        FreeMarkeUtil.fprint(path, "mapper.ftl", root, fileName);
+
     }
 
-    public void setFieldMap(Map<String, String> fieldMap) {
-        this.fieldMap = fieldMap;
+    public void createModel(String basePath, String pakage, String className) {
+        String path = basePath + "model";//所创建文件的路径
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();//创建目录
+        }
+        String fileName = className + "Model.java";//文件名及类型
+        Map<String, Object> root = new HashMap<>();
+        root.put("className", className);
+        root.put("lowclassName", SqlToPoUtil.toLowerCaseFirstOne(className));
+        root.put("pakage", pakage);
+        Map<String, String> typeMap = new HashMap<>();
+        Set<String> keys = javaTypeMap.keySet();
+        for (Object key : keys) {
+            String k = (String) key;
+            String field = SqlToPoUtil.replaceUnderlineAndfirstToUpper(k);
+            String javaType = javaTypeMap.get(k);
+            typeMap.put(field, javaType);
+            commentMap.put(field, commentMap.get(k));
+        }
+        root.put("typeMap", typeMap);
+        root.put("commentMap", commentMap);
+        FreeMarkeUtil.fprint(path, "model.ftl", root, fileName);
     }
 
-    public Map<String, String> getJavaTypeMap() {
-        return javaTypeMap;
+    public void createDto(String basePath, String pakage, String className) {
+        String path = basePath + "dto";//所创建文件的路径
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();//创建目录
+        }
+        String fileName = className + "Dto.java";//文件名及类型
+        Map<String, Object> root = new HashMap<>();
+        root.put("className", className);
+        root.put("lowclassName", SqlToPoUtil.toLowerCaseFirstOne(className));
+        root.put("pakage", pakage);
+        Map<String, String> typeMap = new HashMap<>();
+        Set<String> keys = javaTypeMap.keySet();
+        for (Object key : keys) {
+            String k = (String) key;
+            String field = SqlToPoUtil.replaceUnderlineAndfirstToUpper(k);
+            String javaType = javaTypeMap.get(k);
+            if (javaType.equals("Date")) {
+                javaType = "String";
+            }
+            if (javaType.equals("Long")) {
+                javaType = "String";
+            }
+            typeMap.put(field, javaType);
+            commentMap.put(field, commentMap.get(k));
+        }
+        root.put("typeMap", typeMap);
+        root.put("commentMap", commentMap);
+        FreeMarkeUtil.fprint(path, "dto.ftl", root, fileName);
     }
 
-    public void setJavaTypeMap(Map<String, String> javaTypeMap) {
-        this.javaTypeMap = javaTypeMap;
+    public void createDao(String basePath, String pakage, String className, String primaryKey) {
+        String path = basePath + "dao";//所创建文件的路径
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();//创建目录
+        }
+        String fileName = className + "Mapper.java";//文件名及类型
+        Map<String, Object> root = new HashMap<>();
+        root.put("className", className);
+        root.put("lowclassName", SqlToPoUtil.toLowerCaseFirstOne(className));
+        root.put("pakage", pakage);
+        root.put("primaryKey", primaryKey);
+        FreeMarkeUtil.fprint(path, "dao.ftl", root, fileName);
     }
 
-    public Map<String, String> getJdbcTypeMap() {
-        return jdbcTypeMap;
+    public void createService(String basePath, String pakage, String className, String primaryKey) {
+        String path = basePath + "service";//所创建文件的路径
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();//创建目录
+        }
+        String fileName = "I" + className + "Service.java";//文件名及类型
+        Map<String, Object> root = new HashMap<>();
+        root.put("className", className);
+        root.put("lowclassName", SqlToPoUtil.toLowerCaseFirstOne(className));
+        root.put("pakage", pakage);
+        root.put("primaryKey", primaryKey);
+        FreeMarkeUtil.fprint(path, "service.ftl", root, fileName);
     }
 
-    public void setJdbcTypeMap(Map<String, String> jdbcTypeMap) {
-        this.jdbcTypeMap = jdbcTypeMap;
+    public void createServiceIml(String basePath, String pakage, String className, String primaryKey) {
+        String path = basePath + "serviceiml";//所创建文件的路径
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();//创建目录
+        }
+        String fileName = className + "Service.java";//文件名及类型
+        Map<String, Object> root = new HashMap<>();
+        root.put("className", className);
+        root.put("lowclassName", SqlToPoUtil.toLowerCaseFirstOne(className));
+        root.put("pakage", pakage);
+        root.put("primaryKey", primaryKey);
+        FreeMarkeUtil.fprint(path, "serviceiml.ftl", root, fileName);
+
     }
 
+    public void createDataBaseDesign(String tableName) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("tableName", tableName);
+            map.put("fields", fieldsList);
+            XWPFDocument doc = WordExportUtil
+                    .exportWord07("templates/data-base-design.docx", map);
+            FileOutputStream fos = new FileOutputStream("D:/autoCode/数据库设计说明书.docx");
+            doc.write(fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    public Map<String, String> getCommentMap() {
-        return commentMap;
-    }
-
-    public void setCommentMap(Map<String, String> commentMap) {
-        this.commentMap = commentMap;
     }
 
     public List<Map<String, Object>> getFieldsList() {
