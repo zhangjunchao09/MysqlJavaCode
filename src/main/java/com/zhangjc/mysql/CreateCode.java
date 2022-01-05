@@ -13,7 +13,7 @@ class CreateCode {
         try {
             XWPFDocument doc = WordExportUtil
                     .exportWord07("templates/data-base-design.docx", list);
-            FileOutputStream fos = new FileOutputStream("D:/autoCode/" + dbName + "数据库设计说明书.docx");
+            FileOutputStream fos = new FileOutputStream("D:/autoCode/" + dbName + "-数据库设计说明书.docx");
             doc.write(fos);
             fos.close();
         } catch (Exception e) {

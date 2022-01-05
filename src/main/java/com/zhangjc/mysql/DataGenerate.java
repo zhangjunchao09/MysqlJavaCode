@@ -211,7 +211,7 @@ public class DataGenerate {
             map.put("fields", fieldsList);
             XWPFDocument doc = WordExportUtil
                     .exportWord07("templates/data-base-design.docx", map);
-            FileOutputStream fos = new FileOutputStream("D:/autoCode/数据库设计说明书.docx");
+            FileOutputStream fos = new FileOutputStream("D:/autoCode/" + tableName + "-数据库设计说明书.docx");
             doc.write(fos);
             fos.close();
         } catch (Exception e) {
