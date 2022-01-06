@@ -1,7 +1,7 @@
 package com.zhangjc.mysql;
 
+import com.zhangjc.mysql.config.Config;
 import com.zhangjc.mysql.jdbc.DBHelper;
-import com.zhangjc.mysql.utils.PropertiesUtil;
 import com.zhangjc.mysql.utils.SqlToPoUtil;
 
 import java.sql.ResultSet;
@@ -14,58 +14,31 @@ import java.util.Map;
 
 public class MysqlToJava {
 
+    public String basePath; // 文件生成路径
+    public String pakage; // 代码包名
 
-    private static String url;
-    private static String driverName;
-    private static String user;
-    private static String password;
+    public String dbName;
 
-    private static String basePath; // 文件生成路径
-    private static String pakage; // 代码包名
+    public String tableName;
+    public String className;
+    public String primaryKeyField;
+    public String primaryKey;
 
-    private static String dbName;
-
-    private static String tableName;
-    private static String className;
-    private static String primaryKeyField;
-    private static String primaryKey;
-
-    public static void main(String[] args) {
-        /**
-         * 数据库连接
-         */
-        url = PropertiesUtil.getPropertiesByName("url");
-        driverName = PropertiesUtil.getPropertiesByName("driverName");
-        user = PropertiesUtil.getPropertiesByName("user");
-        password = PropertiesUtil.getPropertiesByName("password");
-
-        dbName = PropertiesUtil.getPropertiesByName("dbName");
-
-        /**
-         * 包名和文件路径
-         */
-        pakage = PropertiesUtil.getPropertiesByName("pakage");
-        basePath = PropertiesUtil.getPropertiesByName("basePath");
-
-
-        /**
-         * 表名和主键
-         */
-        tableName = PropertiesUtil.getPropertiesByName("tableName");
+    public MysqlToJava() {
+        dbName = Config.dbName;
+        pakage = Config.pakage;
+        basePath = Config.basePath;
+        tableName = Config.tableName;
         className = SqlToPoUtil.toUpperCaseFirstOne(SqlToPoUtil.replaceUnderlineAndfirstToUpper(tableName));
-        primaryKeyField = PropertiesUtil.getPropertiesByName("primaryKey");
+        primaryKeyField = Config.primaryKeyField;
         primaryKey = SqlToPoUtil.replaceUnderlineAndfirstToUpper(primaryKeyField);
 
-//        singleTableToJavaCode();
-//        multiTableToJavaCode();
-
-        dataBaseDesign();
     }
 
     /**
      * 单表生成代码和表设计
      */
-    public static void singleTableToJavaCode() {
+    public void singleTableToJavaCode() {
         DataGenerate dataGenerate = singleTableToDataGenerate(dbName, tableName);
 
         dataGenerate.createDao(basePath, pakage, className, primaryKey);
@@ -80,12 +53,12 @@ public class MysqlToJava {
     /**
      * 多表生成代码
      */
-    public static void multiTableToJavaCode() {
-        List<Map<String, Object>> data = new ArrayList();
+    public void multiTableToJavaCode() {
 
         String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA ='" + dbName + "'";
-        DBHelper tableDb = new DBHelper(url, driverName, user, password, tableSql);//创建DBHelper对象
-        try (ResultSet ret = tableDb.pst.executeQuery()) {
+
+        try (DBHelper tableDb = new DBHelper(tableSql);
+             ResultSet ret = tableDb.executeQuery()) {
             while (ret.next()) {
                 String table_name = ret.getString(1);
                 String class_name = SqlToPoUtil.toUpperCaseFirstOne(SqlToPoUtil.replaceUnderlineAndfirstToUpper(table_name));
@@ -110,9 +83,10 @@ public class MysqlToJava {
     public static DataGenerate singleTableToDataGenerate(String db_name, String table_name) {
         String sql = "select column_name,data_type,character_maximum_length,column_comment " +
                 "from information_schema.columns where table_schema ='" + db_name + "'  and table_name = '" + table_name + "' order by data_type";//SQL语句
-        DBHelper db = new DBHelper(url, driverName, user, password, sql);//创建DBHelper对象
+
         DataGenerate dataGenerate = new DataGenerate();
-        try (ResultSet ret = db.pst.executeQuery()) {
+        try (DBHelper db = new DBHelper(sql);
+             ResultSet ret = db.executeQuery()) {
             dataGenerate.dataGenerate(ret);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -123,12 +97,13 @@ public class MysqlToJava {
     /**
      * 多表生成数据库设计说明
      */
-    public static void dataBaseDesign() {
+    public void dataBaseDesign() {
         List<Map<String, Object>> data = new ArrayList();
 
         String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA ='" + dbName + "'";
-        DBHelper tableDb = new DBHelper(url, driverName, user, password, tableSql);//创建DBHelper对象
-        try (ResultSet ret = tableDb.pst.executeQuery()) {
+
+        try (DBHelper tableDb = new DBHelper(tableSql);
+             ResultSet ret = tableDb.executeQuery()) {
             while (ret.next()) {
                 String table_name = ret.getString(1);
 //                String table_comment = ret.getString(2);
@@ -144,7 +119,7 @@ public class MysqlToJava {
             e.printStackTrace();
         }
 
-        CreateCode.createDataBaseDesign(dbName, data);
+        CreateDataBaseDesign.createDataBaseDesign(dbName, data);
 
     }
 

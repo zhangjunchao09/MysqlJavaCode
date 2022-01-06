@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
-class CreateCode {
+class CreateDataBaseDesign {
 
     public static void createDataBaseDesign(String dbName, List<Map<String, Object>> list) {
         try {
