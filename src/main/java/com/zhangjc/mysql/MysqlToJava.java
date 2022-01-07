@@ -1,6 +1,5 @@
 package com.zhangjc.mysql;
 
-import com.zhangjc.mysql.config.Config;
 import com.zhangjc.mysql.jdbc.DBHelper;
 import com.zhangjc.mysql.utils.SqlToPoUtil;
 
@@ -12,27 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MysqlToJava {
+public class MysqlToJava extends BaseToJava {
 
-    public String basePath; // 文件生成路径
-    public String pakage; // 代码包名
-
-    public String dbName;
-
-    public String tableName;
-    public String className;
-    public String primaryKeyField;
-    public String primaryKey;
+    String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA ='dbName'";
+    String columnSql = "select column_name,data_type,character_maximum_length,column_comment " +
+            "from information_schema.columns where table_schema ='dbName' and table_name = 'tableName' order by data_type";//SQL语句
 
     public MysqlToJava() {
-        dbName = Config.dbName;
-        pakage = Config.pakage;
-        basePath = Config.basePath;
-        tableName = Config.tableName;
-        className = SqlToPoUtil.toUpperCaseFirstOne(SqlToPoUtil.replaceUnderlineAndfirstToUpper(tableName));
-        primaryKeyField = Config.primaryKeyField;
-        primaryKey = SqlToPoUtil.replaceUnderlineAndfirstToUpper(primaryKeyField);
-
+        init();
     }
 
     /**
@@ -55,9 +41,9 @@ public class MysqlToJava {
      */
     public void multiTableToJavaCode() {
 
-        String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA ='" + dbName + "'";
+        String sql = tableSql.replace("dbName", dbName);
 
-        try (DBHelper tableDb = new DBHelper(tableSql);
+        try (DBHelper tableDb = new DBHelper(sql);
              ResultSet ret = tableDb.executeQuery()) {
             while (ret.next()) {
                 String table_name = ret.getString(1);
@@ -80,10 +66,8 @@ public class MysqlToJava {
     /**
      * 单表生成代码和表设计
      */
-    public static DataGenerate singleTableToDataGenerate(String db_name, String table_name) {
-        String sql = "select column_name,data_type,character_maximum_length,column_comment " +
-                "from information_schema.columns where table_schema ='" + db_name + "'  and table_name = '" + table_name + "' order by data_type";//SQL语句
-
+    public DataGenerate singleTableToDataGenerate(String db_name, String table_name) {
+        String sql = columnSql.replace("dbName", db_name).replace("tableName", table_name);
         DataGenerate dataGenerate = new DataGenerate();
         try (DBHelper db = new DBHelper(sql);
              ResultSet ret = db.executeQuery()) {
@@ -99,10 +83,9 @@ public class MysqlToJava {
      */
     public void dataBaseDesign() {
         List<Map<String, Object>> data = new ArrayList();
+        String sql = tableSql.replace("dbName", dbName);
 
-        String tableSql = "select TABLE_NAME,TABLE_COMMENT from information_schema.tables where TABLE_SCHEMA ='" + dbName + "'";
-
-        try (DBHelper tableDb = new DBHelper(tableSql);
+        try (DBHelper tableDb = new DBHelper(sql);
              ResultSet ret = tableDb.executeQuery()) {
             while (ret.next()) {
                 String table_name = ret.getString(1);
