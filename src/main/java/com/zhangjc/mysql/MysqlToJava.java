@@ -25,16 +25,25 @@ public class MysqlToJava extends BaseToJava {
      * 单表生成代码和表设计
      */
     public void singleTableToJavaCode() {
-        DataGenerate dataGenerate = singleTableToDataGenerate(dbName, tableName);
-
-        dataGenerate.createDao(basePath, pakage, className, primaryKey);
-        dataGenerate.createService(basePath, pakage, className, primaryKey);
-        dataGenerate.createServiceIml(basePath, pakage, className, primaryKey);
-        dataGenerate.createDto(basePath, pakage, className);
-        dataGenerate.createModel(basePath, pakage, className);
-        dataGenerate.createMapper(basePath, pakage, className, tableName, primaryKey, primaryKeyField);
-        dataGenerate.createDataBaseDesign(tableName);
+        String class_name = SqlToPoUtil.toUpperCaseFirstOne(SqlToPoUtil.replaceUnderlineAndfirstToUpper(tableName));
+        singleTableToJavaCode(dbName, tableName, class_name);
     }
+
+    /**
+     * 单表生成代码和表设计
+     */
+    public void singleTableToJavaCode(String db_name, String table_name, String class_name) {
+        DataGenerate dataGenerate = singleTableToDataGenerate(db_name, table_name);
+
+        dataGenerate.createDao(basePath, pakage, class_name, primaryKey);
+        dataGenerate.createService(basePath, pakage, class_name, primaryKey);
+        dataGenerate.createServiceIml(basePath, pakage, class_name, primaryKey);
+        dataGenerate.createDto(basePath, pakage, class_name);
+        dataGenerate.createModel(basePath, pakage, class_name);
+        dataGenerate.createMapper(basePath, pakage, class_name, table_name, primaryKey, primaryKeyField);
+        dataGenerate.createDataBaseDesign(table_name);
+    }
+
 
     /**
      * 多表生成代码
@@ -48,15 +57,7 @@ public class MysqlToJava extends BaseToJava {
             while (ret.next()) {
                 String table_name = ret.getString(1);
                 String class_name = SqlToPoUtil.toUpperCaseFirstOne(SqlToPoUtil.replaceUnderlineAndfirstToUpper(table_name));
-
-                DataGenerate dataGenerate = singleTableToDataGenerate(dbName, table_name);
-
-                dataGenerate.createDao(basePath, pakage, class_name, primaryKey);
-                dataGenerate.createService(basePath, pakage, class_name, primaryKey);
-                dataGenerate.createServiceIml(basePath, pakage, class_name, primaryKey);
-                dataGenerate.createDto(basePath, pakage, class_name);
-                dataGenerate.createModel(basePath, pakage, class_name);
-                dataGenerate.createMapper(basePath, pakage, class_name, table_name, primaryKey, primaryKeyField);
+                singleTableToJavaCode(dbName, table_name, class_name);
             }
         } catch (SQLException e) {
             e.printStackTrace();
