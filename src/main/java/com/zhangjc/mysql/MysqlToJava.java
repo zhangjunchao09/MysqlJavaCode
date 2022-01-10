@@ -86,6 +86,7 @@ public class MysqlToJava extends BaseToJava {
         List<Map<String, Object>> data = new ArrayList();
         String sql = tableSql.replace("dbName", dbName);
 
+        int index = 1;
         try (DBHelper tableDb = new DBHelper(sql);
              ResultSet ret = tableDb.executeQuery()) {
             while (ret.next()) {
@@ -95,9 +96,11 @@ public class MysqlToJava extends BaseToJava {
                 List<Map<String, Object>> fieldsList = dataGenerate.getFieldsList();
 
                 Map<String, Object> map = new HashMap<>();
-                map.put("tableName", tableName);
+                map.put("tableName", table_name);
                 map.put("fields", fieldsList);
+                map.put("index", index);
                 data.add(map);
+                index++;
             }
         } catch (SQLException e) {
             e.printStackTrace();
