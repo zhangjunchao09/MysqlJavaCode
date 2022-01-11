@@ -204,14 +204,19 @@ public class DataGenerate {
 
     }
 
-    public void createDataBaseDesign(String tableName) {
+    public void createDataBaseDesign(String basePath, String tableName) {
         try {
+            String path = basePath + "design";//所创建文件的路径
+            File f = new File(path);
+            if (!f.exists()) {
+                f.mkdirs();//创建目录
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("tableName", tableName);
             map.put("fields", fieldsList);
             XWPFDocument doc = WordExportUtil
                     .exportWord07("templates/data-base-design.docx", map);
-            FileOutputStream fos = new FileOutputStream("D:/autoCode/" + tableName + "-数据库设计说明书.docx");
+            FileOutputStream fos = new FileOutputStream(path + "/" + tableName + "-数据库设计说明书.docx");
             doc.write(fos);
             fos.close();
         } catch (Exception e) {

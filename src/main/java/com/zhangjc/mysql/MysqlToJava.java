@@ -41,7 +41,7 @@ public class MysqlToJava extends BaseToJava {
         dataGenerate.createDto(basePath, pakage, class_name);
         dataGenerate.createModel(basePath, pakage, class_name);
         dataGenerate.createMapper(basePath, pakage, class_name, table_name, primaryKey, primaryKeyField);
-        dataGenerate.createDataBaseDesign(table_name);
+        dataGenerate.createDataBaseDesign(basePath, table_name);
     }
 
 
@@ -108,7 +108,7 @@ public class MysqlToJava extends BaseToJava {
             e.printStackTrace();
         }
 
-        CreateDataBaseDesign.createDataBaseDesign(dbName, data);
+        CreateDataBaseDesign.createDataBaseDesign(basePath, dbName, data);
 
     }
 
