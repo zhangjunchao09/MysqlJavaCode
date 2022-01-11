@@ -86,21 +86,24 @@ public class MysqlToJava extends BaseToJava {
         List<Map<String, Object>> data = new ArrayList();
         String sql = tableSql.replace("dbName", dbName);
 
-        int index = 1;
         try (DBHelper tableDb = new DBHelper(sql);
              ResultSet ret = tableDb.executeQuery()) {
             while (ret.next()) {
                 String table_name = ret.getString(1);
-//                String table_comment = ret.getString(2);
+                String table_comment = ret.getString(2);
+                if (null == table_comment) {
+                    table_comment = "";
+                }
                 DataGenerate dataGenerate = singleTableToDataGenerate(dbName, table_name);
                 List<Map<String, Object>> fieldsList = dataGenerate.getFieldsList();
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("tableName", table_name);
+                map.put("tableComment", table_comment);
                 map.put("fields", fieldsList);
-                map.put("index", index);
+                map.put("dbName", dbName);
+
                 data.add(map);
-                index++;
             }
         } catch (SQLException e) {
             e.printStackTrace();
