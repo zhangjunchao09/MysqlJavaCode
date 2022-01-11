@@ -92,7 +92,7 @@ public class MysqlToJava extends BaseToJava {
                 String table_name = ret.getString(1);
                 String table_comment = ret.getString(2);
                 if (null == table_comment) {
-                    table_comment = "";
+                    table_comment = " ";
                 }
                 DataGenerate dataGenerate = singleTableToDataGenerate(dbName, table_name);
                 List<Map<String, Object>> fieldsList = dataGenerate.getFieldsList();

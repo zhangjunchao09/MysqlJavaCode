@@ -213,6 +213,7 @@ public class DataGenerate {
             }
             Map<String, Object> map = new HashMap<>();
             map.put("tableName", tableName);
+            map.put("tableComment", " ");
             map.put("fields", fieldsList);
             XWPFDocument doc = WordExportUtil
                     .exportWord07("templates/data-base-design.docx", map);
