@@ -101,7 +101,6 @@ public class MysqlToJava extends BaseToJava {
                 map.put("tableName", table_name);
                 map.put("tableComment", table_comment);
                 map.put("fields", fieldsList);
-                map.put("dbName", dbName);
 
                 data.add(map);
             }
