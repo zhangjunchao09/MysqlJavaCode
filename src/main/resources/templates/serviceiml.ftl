@@ -77,9 +77,9 @@ public class ${className}Service implements I${className}Service {
         List<${className}Model> ${lowclassName}Models = ${lowclassName}Mapper.get${className}s(${lowclassName}Dto);
         List<${className}Dto> ${lowclassName}Dtos = new ArrayList<>();
         for (${className}Model ${lowclassName}Model: ${lowclassName}Models) {
-            ${className}Dto ${lowclassName}Dto = new ${className}Dto();
-            BeanUtils.copyProperties(${lowclassName}Model, ${lowclassName}Dto);
-            ${lowclassName}Dtos.add(${lowclassName}Dto);
+            ${className}Dto t = new ${className}Dto();
+            BeanUtils.copyProperties(${lowclassName}Model, t);
+            ${lowclassName}Dtos.add(t);
         }
         return ${lowclassName}Dtos;
     }

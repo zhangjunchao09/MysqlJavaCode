@@ -20,7 +20,7 @@ public class ${className}Controller {
     @Autowired
     I${className}Service ${lowclassName}Service;
 
-    @RequestMapping(value = "/${className}.insert", method = RequestMethod.POST)
+    @RequestMapping(value = "/${lowclassName}.insert", method = RequestMethod.POST)
     public GenericResultDto insert${className}(@RequestBody ${className}Dto ${lowclassName}Dto) {
         if (null == ${lowclassName}Dto) {
             return GenericResultDto.fail("9999","参数为空");
@@ -29,7 +29,7 @@ public class ${className}Controller {
         return GenericResultDto.ok();
     }
 
-    @RequestMapping(value = "/${className}.update$", method = RequestMethod.PUT)
+    @RequestMapping(value = "/${lowclassName}.update$", method = RequestMethod.PUT)
     public GenericResultDto update${className}(@RequestBody ${className}Dto ${lowclassName}Dto) {
          if (null == ${lowclassName}Dto) {
              return GenericResultDto.fail("9999","参数为空");
@@ -39,7 +39,7 @@ public class ${className}Controller {
 
     }
 
-    @RequestMapping(value = "/${className}.delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/${lowclassName}.delete", method = RequestMethod.DELETE)
     public GenericResultDto delete${className}(@RequestParam(value = "${primaryKey}") String ${primaryKey}) {
         if (null == ${primaryKey} || "".equals(${primaryKey})) {
              return GenericResultDto.fail("9999","参数为空");
@@ -49,7 +49,7 @@ public class ${className}Controller {
         return GenericResultDto.ok();
     }
 
-    @RequestMapping(value = "/${className}.getByPk", method = RequestMethod.GET)
+    @RequestMapping(value = "/${lowclassName}.getByPk", method = RequestMethod.GET)
     public GenericResultDto<${className}Dto> get${className}(@RequestParam(value = "${primaryKey}") String ${primaryKey}) {
          if (null == ${primaryKey} || "".equals(${primaryKey})) {
              return GenericResultDto.fail("9999","参数为空");
@@ -58,7 +58,7 @@ public class ${className}Controller {
          return GenericResultDto.ok(${lowclassName}Dto);
     }
 
-    @RequestMapping(value = "/${className}.get", method = RequestMethod.GET)
+    @RequestMapping(value = "/${lowclassName}.get", method = RequestMethod.GET)
     public GenericResultDto<GenericPageDTO<${className}Dto>> get${className}s(@RequestBody ${className}Dto ${lowclassName}Dto) {
         List<${className}Dto> ${lowclassName}Dtos = ${lowclassName}Service.get${className}s(${lowclassName}Dto);
 

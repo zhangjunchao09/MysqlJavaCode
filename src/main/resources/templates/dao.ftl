@@ -20,6 +20,6 @@ public interface ${className}Mapper {
 
     ${className}Model get${className}(@Param("${primaryKey}") String ${primaryKey});
 
-    List<${className}Model> get${className}s(${className}Model ${lowclassName}Dto);
+    List<${className}Model> get${className}s(${className}Dto ${lowclassName}Dto);
 
 }
