@@ -38,6 +38,7 @@ public class MysqlToJava extends BaseToJava {
         dataGenerate.createDao(basePath, pakage, class_name, primaryKey);
         dataGenerate.createService(basePath, pakage, class_name, primaryKey);
         dataGenerate.createServiceIml(basePath, pakage, class_name, primaryKey);
+        dataGenerate.createController(basePath, pakage, class_name, primaryKey);
         dataGenerate.createDto(basePath, pakage, class_name);
         dataGenerate.createModel(basePath, pakage, class_name);
         dataGenerate.createMapper(basePath, pakage, class_name, table_name, primaryKey, primaryKeyField);

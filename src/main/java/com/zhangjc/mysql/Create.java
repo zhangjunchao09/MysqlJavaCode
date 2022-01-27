@@ -5,9 +5,9 @@ public class Create {
     public static void main(String[] args) {
 
         MysqlToJava mysqlToJava = new MysqlToJava();
-//        mysqlToJava.singleTableToJavaCode();
+        mysqlToJava.singleTableToJavaCode();
 //        mysqlToJava.multiTableToJavaCode();
 
-        mysqlToJava.dataBaseDesign();
+//        mysqlToJava.dataBaseDesign();
     }
 }

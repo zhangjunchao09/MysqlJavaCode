@@ -14,6 +14,6 @@ public interface I${className}Service {
 
     ${className}Dto get${className}(String ${primaryKey});
 
-    List<${className}Dto> get${className}s();
+    List<${className}Dto> get${className}s(${className}Dto ${lowclassName}Dto);
 
 }

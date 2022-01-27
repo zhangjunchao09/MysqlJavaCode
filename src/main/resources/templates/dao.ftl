@@ -1,6 +1,7 @@
 package ${pakage}.mapper;
 
 import ${pakage}.model.${className}Model;
+import ${pakage}.api.dto.${className}Dto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,6 @@ public interface ${className}Mapper {
 
     ${className}Model get${className}(@Param("${primaryKey}") String ${primaryKey});
 
-    List<${className}Model> get${className}s();
+    List<${className}Model> get${className}s(${className}Model ${lowclassName}Dto);
 
 }

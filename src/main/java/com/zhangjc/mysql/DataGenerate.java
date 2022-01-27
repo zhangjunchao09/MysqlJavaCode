@@ -204,6 +204,22 @@ public class DataGenerate {
 
     }
 
+    public void createController(String basePath, String pakage, String className, String primaryKey) {
+        String path = basePath + "controller";//所创建文件的路径
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();//创建目录
+        }
+        String fileName = className + "Controller.java";//文件名及类型
+        Map<String, Object> root = new HashMap<>();
+        root.put("className", className);
+        root.put("lowclassName", SqlToPoUtil.toLowerCaseFirstOne(className));
+        root.put("pakage", pakage);
+        root.put("primaryKey", primaryKey);
+        FreeMarkeUtil.fprint(path, "controller.ftl", root, fileName);
+
+    }
+
     public void createDataBaseDesign(String basePath, String tableName) {
         try {
             String path = basePath + "design";//所创建文件的路径

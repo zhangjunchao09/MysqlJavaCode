@@ -35,12 +35,21 @@
         where ${primaryKeyField} = ${r"#{"}${primaryKey}}
     </select>
 
-    <select id="get${className}s" resultType="${pakage}.model.${className}Model">
+    <select id="get${className}s" resultType="${pakage}.model.${className}Model" parameterType="${pakage}.api.dto.${className}Dto">
         SELECT
         <#list fieldMap?keys as key>
                 ${key} as  ${fieldMap[key]} <#if key_has_next>,</#if>
         </#list>
         FROM ${tableName}
+        <where>
+           <#list fieldMap?keys as key>
+              <#if key != "${primaryKeyField}">
+              <if test="${fieldMap[key]} != null" >
+                  and ${key} = <@mapperEl fieldMap[key] typeMap[key]/>
+              </if>
+              </#if>
+            </#list>
+        </where>
     </select>
 
     <update id="update${className}" parameterType="${pakage}.model.${className}Model">

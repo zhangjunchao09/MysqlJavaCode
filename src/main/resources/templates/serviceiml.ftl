@@ -73,8 +73,8 @@ public class ${className}Service implements I${className}Service {
     }
 
     @Override
-    public List<${className}Dto> get${className}s() {
-        List<${className}Model> ${lowclassName}Models = ${lowclassName}Mapper.get${className}s();
+    public List<${className}Dto> get${className}s(${className}Dto ${lowclassName}Dto) {
+        List<${className}Model> ${lowclassName}Models = ${lowclassName}Mapper.get${className}s(${lowclassName}Dto);
         List<${className}Dto> ${lowclassName}Dtos = new ArrayList<>();
         for (${className}Model ${lowclassName}Model: ${lowclassName}Models) {
             ${className}Dto ${lowclassName}Dto = new ${className}Dto();
