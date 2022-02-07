@@ -2,15 +2,12 @@ package ${pakage}.service.iml;
 
 import ${pakage}.service.I${className}Service;
 import ${pakage}.api.dto.${className}Dto;
-import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.zvos.common.base.result.GenericResultDto;
 import com.zvos.common.base.result.GenericPageDTO;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
